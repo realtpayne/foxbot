@@ -38,7 +38,7 @@ async def on_message(message):
 
 #bot.event
 #async def on_message(message):
-#    if message.author.id == 273274151085539339:
+#    if message.author.id == 00000000000000:
 #        await message.reply("We are not affiliated, nor do we condone the words coming out of this mans mouth")
 # sends a silly "we do not condone" message whenever a specific user sends messages
 
