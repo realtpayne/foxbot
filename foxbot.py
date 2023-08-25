@@ -10,8 +10,9 @@ import random
 import json
 
 load_dotenv() #loads the .env file
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("DISCORD_TOKEN") # discord token from .env file
 bad_words = os.getenv('BAD_WORDS').split(' ') # reads BAD_WORDS from the .env file, stores a list of no no words
+RAPIDAPI_TOKEN = os.getenv("RAPIDAPI_TOKEN") # rapid api token from .env file
 
 intents = discord.Intents.all() #sets intents variable
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -29,7 +30,7 @@ async def on_message(message):
 
         Skid = re.compile(r"\bfbi\b", re.IGNORECASE)
         if Skid.search(message.content) :
-            if message.author.id == 00000000000000000000 :
+            if message.author.id == 000000000000000000000000 :
                 await message.reply("We're already watching you.")
             else:
                 pass
@@ -37,7 +38,7 @@ async def on_message(message):
 
         w0w = re.compile(r"\bw0+w\b", re.IGNORECASE)
         if w0w.search(message.content) :
-            if message.author.id == 00000000000000000000 :
+            if message.author.id == 000000000000000000000000 :
                 await message.reply("w0w")
             else:
                 pass
@@ -60,26 +61,32 @@ async def on_message(message):
 
         Aho = re.compile(r"\bAho\b", re.IGNORECASE)
         if (Aho.search(message.content)) :
-                await message.reply("Aho young warrior")
-                #Responds with quote from reservation dogs TV show
+            await message.reply("https://media.tenor.com/mkfDduZCrKsAAAAC/n-dn-reservation-dogs.gif")
+                #Responds with gif from reservation dogs TV show
 
 @bot.command()
 async def whoami(ctx, *args):
     #if ctx.message.author.guild_permissions.administrator:
     #    await ctx.send(f"You should know, you're the one in charge {ctx.message.author.mention}") # moving down to help with the flow of the if statement
-    if ctx.message.author.id == 00000000000000000000:
+    if ctx.message.author.id == 000000000000000000000000:
         await ctx.send(f"I know you, you're forktruck certified") # tempest custom response
-    elif ctx.message.author.id == 00000000000000000000:
+    elif ctx.message.author.id == 000000000000000000000000:
         await ctx.send(f"You're that Nginx and Postgres guy") # dj-nginx custom response
-    elif ctx.message.author.id == 00000000000000000000 :
+    elif ctx.message.author.id == 000000000000000000000000 :
         await ctx.send(f"Is that you Big uncle?") # vilar custom response
-    elif ctx.message.author.id == 00000000000000000000 :
+    elif ctx.message.author.id == 000000000000000000000000 :
+        await ctx.send(f"You are a beautiful asian woman") # muffin custom response
+    elif ctx.message.author.id == 000000000000000000000000 :
         await ctx.send(f"w0w, you would ask. . .") # luna custom response
-    elif ctx.message.author.id == 00000000000000000000 :
+    elif ctx.message.author.id == 000000000000000000000000 :
         await ctx.send(f"You're the meme man") # mcneth custom response
-    elif ctx.message.author.id == 00000000000000000000 :
+    elif ctx.message.author.id == 000000000000000000000000 :
         await ctx.send(f"You're the man with the Tungsten cube") # skootz custom response
-#    elif ctx.message.author.id ==  :
+    elif ctx.message.author.id == 000000000000000000000000 :
+        await ctx.send(f"You're the flower cat")
+        await ctx.send("https://i.imgur.com/HlvPc1t.jpeg") # kt custom response
+    elif ctx.message.author.id == 000000000000000000000000 :
+        await ctx.send(f"You're Duchess Silvia!") # xeyska custom response
     elif ctx.message.author.guild_permissions.administrator:
         await ctx.send(f"You should know, you're the one in charge {ctx.message.author.mention}") # general response w/ admin
     else:
@@ -136,5 +143,38 @@ async def addquote(ctx, quote_):
         add_quote(quote_)
         await ctx.send("Done!")
 
+@bot.command(pass_context=True)
+async def weather(ctx, arg):
+        place = arg
+        url = "https://weatherapi-com.p.rapidapi.com/current.json"
+        querystring = {"q": place.format(str)}
+
+        headers = {
+            "x-rapidapi-key": RAPIDAPI_TOKEN,
+            "x-rapidapi-host": "weatherapi-com.p.rapidapi.com"
+            }
+
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        data = response.json()
+        result_location = data["location"]
+        result_current = data["current"]
+        pretty_location = result_location["name"]
+        result_condition = data["current"]["condition"]
+
+        w_forcast = result_condition["text"]
+        pretty_w_forcast = w_forcast.lower()
+
+        current_tempf = result_current["temp_f"]
+        pretty_tempf = "{:.0f} °F".format(current_tempf)
+        # rounds to nearest whole number
+        current_tempc = result_current["temp_c"]
+        pretty_tempc = "{:.0f} °C".format(current_tempc)
+        # rounds to nearest whole number
+
+        forcast = (f"> The current temperature in {pretty_location} is "
+            f"{pretty_tempf} / {pretty_tempc}. The current forcast "
+            f"is _{pretty_w_forcast}_, {result_current['humidity'] }% humidity.")
+
+        await ctx.send(forcast)
 
 bot.run(TOKEN)
